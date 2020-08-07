@@ -6,7 +6,7 @@ Used composer autoloader.
 
 # Setup and usage
 
-1. cd <directory of your choice>
+1. cd directory of your choice
 2. git clone https://github.com/mateuszpoland/PHP_image_resizer-.git
 3. cd PHP_image_resizer
 4. composer install
