@@ -25,13 +25,13 @@ class FileProcessor
         $this->fileZipper = $fileZipper;
     }
 
-    public function processFiles(array $fileNames, array $tmpFilePath, string $uploadPath, int $width, int $height): self
-    {
+    public function processFiles(array $fileNames, array $tmpFilePath, string $uploadPath): self
+    {   
         $totalFiles = count($fileNames);
         for($i = 0; $i < $totalFiles; $i++) {
             $filePath = $tmpFilePath[$i];
             $image = new ImageResize($filePath);
-            $image->scale(50);
+            $image->resizeToLongSide(self::MAX_LONGER_SIDE_LENGTH);
             $image->save($uploadPath . $fileNames[$i]);
             $this->fileZipper->addFileToArchive($uploadPath . $fileNames[$i]);
         }

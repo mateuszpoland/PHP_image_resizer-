@@ -18,7 +18,7 @@ class FileZipper
     {
         $zip = new ZipArchive();
         if(!empty($this->filePathsToArchive)){
-            if ($zip->open($archiveName, ZipArchive::CREATE) === TRUE) {
+            if ($zip->open($archiveName, (ZipArchive::CREATE | ZipArchive::OVERWRITE)) === TRUE) {
                 foreach($this->filePathsToArchive as $filePath) {
                     $zip->addFile($filePath, 'resized_' . basename($filePath));
                 }

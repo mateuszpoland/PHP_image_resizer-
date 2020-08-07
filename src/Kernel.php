@@ -49,12 +49,7 @@ class Kernel extends BaseKernel
                 <body>
                     <h2>Przytnij obrazek</h2>
                     <form action="/cropImage" method="POST" enctype="multipart/form-data">
-                        <input type="file" name="images[]", accept="image/png, image/jpg" multiple/>
-                        <label for="dimensions">Wpisz wymiary (width x height)</label>
-                        <div>
-                            <input type="number" name="width" placeholder="szerokość"/>
-                            <input type="number" name="height" placeholder="wysokość"/>
-                        </div>
+                        <input type="file" name="images[]", accept="image/jpg, image/jpeg image/png" multiple/>
                         <div>
                             <input type="submit" value="przytnij" name="submit"/>
                         </div>
@@ -67,14 +62,13 @@ class Kernel extends BaseKernel
     public function cropImage()
     {
         $tmpFilePaths = $_FILES['images']['tmp_name'];
-        $width = (int)$_POST['width'];
-        $height = (int)$_POST['height'];
-        
-        $total_files = count($_FILES['images']['name']);
+        if(empty($tmpFilePaths)) {
+            return new Response('No files uploaded.', Response::HTTP_BAD_REQUEST);
+        }
+       
         $imageNames = $_FILES['images']['name'];
-        #$uploadPath = '/tmp/uploads';
         $uploadPath = __DIR__. '/uploads/processed/';
-        //$response = new Response($file);
+
        try {
             $responseBuilder = new ResponseBuilder();
             $fileZipper = new FileZipper();
@@ -83,21 +77,18 @@ class Kernel extends BaseKernel
                 $fileZipper
             );
             $archiveName = 'archive.zip';
-            return $fileProcessor->processFiles($imageNames, $tmpFilePaths, $uploadPath, $width, $height)
-                           ->createArchive($uploadPath, $archiveName)
-                           ->returnAttachmentResponse();
+            return $fileProcessor->processFiles(
+                $imageNames,
+                $tmpFilePaths,
+                $uploadPath
+            )
+            ->createArchive($uploadPath, $archiveName)
+            ->returnAttachmentResponse();
 
         } catch(ImageResizeException $e) {
             return new Response('
                 <pre>${$e->getMessage()}</pre>
             ');
         }
-        die;
-        //$disp = $response->headers->makeDisposition(
-        //    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-        //    $file
-        //);
-        //$response->headers->set('Content-Disposition', $disp);
-        return $response;
     }
 }
