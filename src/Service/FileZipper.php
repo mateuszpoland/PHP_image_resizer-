@@ -20,7 +20,7 @@ class FileZipper
         if(!empty($this->filePathsToArchive)){
             if ($zip->open($archiveName, ZipArchive::CREATE) === TRUE) {
                 foreach($this->filePathsToArchive as $filePath) {
-                    $zip->addFile(basename($filePath));
+                    $zip->addFile($filePath, basename($filePath));
                 }
                 $zip->close();
             }

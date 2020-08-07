@@ -13,6 +13,8 @@ class ResponseBuilder
 
     public function buildResponse(): Response
     {
+        //var_dump($this->downloadPath);
+       // die;
         if(!$this->downloadPath) {
             return new Response('Attachment not found', Response::HTTP_NOT_FOUND);
         }
