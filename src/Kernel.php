@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace ClickMeeting;
 
 use ClickMeeting\Service\FileProcessor;
+use ClickMeeting\Service\FileZipper;
+use ClickMeeting\Service\ResponseBuilder;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -73,22 +75,20 @@ class Kernel extends BaseKernel
         #$uploadPath = '/tmp/uploads';
         $uploadPath = __DIR__. '/uploads/processed/';
         //$response = new Response($file);
-        for($i = 0; $i < $total_files; $i++){
-            $tmpFilePath = $tmpFilePaths[$i];
-            $uploadFilePath =  __DIR__ . '/uploads/' . $_FILES['images']['name'][$i];
-            move_uploaded_file($tmpFilePath, $uploadFilePath);
-            $image = new ImageResize($uploadFilePath);
-            $width = $image->getSourceWidth();
-            $height = $image->getSourceHeight();
-            $orientation = ($width >= $height) ? 'HORIZONTAL' : 'VERTICAL';
-            $image->scale(50);
-            $image->save(__DIR__. '/uploads/processed/scaled.png');
-        }
        try {
-            $fileProcessor = new FileProcessor();
-            $fileProcessor->processFiles($imageNames, $uploadPath, $width, $height);
+            $responseBuilder = new ResponseBuilder();
+            $fileZipper = new FileZipper();
+            $fileProcessor = new FileProcessor(
+                $responseBuilder,
+                $fileZipper
+            );
+            $archiveName = 'archive.zip';
+            return $fileProcessor->processFiles($imageNames, $tmpFilePaths, $uploadPath, $width, $height)
+                           ->createArchive($uploadPath, $archiveName)
+                           ->returnAttachmentResponse();
+
         } catch(ImageResizeException $e) {
-            new Response('
+            return new Response('
                 <pre>${$e->getMessage()}</pre>
             ');
         }
