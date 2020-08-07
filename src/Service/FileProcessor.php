@@ -42,7 +42,7 @@ class FileProcessor
     public function createArchive(string $path, string $archiveName): self
     {
         $this->fileZipper->createArchive($path, $archiveName);
-        $this->responseBuilder->setDownloadPath($path, $archiveName);
+        $this->responseBuilder->setDownloadPath($archiveName);
         return $this;
     }
 

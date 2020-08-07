@@ -19,7 +19,7 @@ class ResponseBuilder
         $response = new Response(file_get_contents($this->downloadPath));
         $disp = $response->headers->makeDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                'downloaded.zip'
+                $this->downloadPath
         );
         $response->headers->set('Content-Type', 'application/zip');
         $response->headers->set('Content-length', filesize($this->downloadPath));
@@ -27,8 +27,8 @@ class ResponseBuilder
         return $response;
     }
 
-    public function setDownloadPath(string $path, string $archiveName): void
+    public function setDownloadPath(string $archiveName): void
     {
-        $this->downloadPath = $path . $archiveName;
+        $this->downloadPath = $archiveName;
     }
 }
